@@ -132,14 +132,14 @@ export default function BudgetsPage() {
                                   {product.title}
                               </a>
                           </td>
-                          <td className="border border-white" style={{ padding: '2px', width: '130px'}}>$ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                          <td className="border border-white" style={{ padding: '2px', width: '150px', textAlign: 'center' }}>$ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
 
 
                           <td className="border border-white" style={{ padding: '2px' }}>
                               <Image src={product.thumbnail} alt={product.title} width="100" height="70" />
                           </td>
 
-                          <td className="border border-white">
+                          <td className="border border-white" style={{textAlign: 'center' }}>
                               <button title="Agregar a comparativa">
                                   <FaPlus />
                               </button>
