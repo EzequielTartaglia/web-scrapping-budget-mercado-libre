@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FaEye, FaPlus } from 'react-icons/fa';
+import Image from 'next/image';
 
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
@@ -40,7 +41,7 @@ export default function BudgetsPage() {
   const searchProducts = async () => {
     try {
       const response = await fetch(
-        `https://api.mercadolibre.com/sites/MLA/search?q=${query}&adress.state_name=${province}&sort=${sortOrder}
+        `https://api.mercadolibre.com/sites/MLA/search?q=${query}&adress.state.name=${province}&sort=${sortOrder}
         `);
       const data = await response.json();
       setProducts(data.results);
@@ -104,30 +105,49 @@ export default function BudgetsPage() {
               <tr>
                 <th className="border border-white">Producto</th>
                 <th className="border border-white">Precio</th>
+                <th className="w-1/10 border border-white">Imagen</th>
                 <th className="border border-white">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <tr key={product.id}>
-                  <td className="border border-white">
-                    <a href={product.link} target="_blank" rel="noopener noreferrer" title="Ver en Mercado Libre">
-                      {product.title}
-                    </a>
-                  </td>
-                  <td className="border border-white">${product.price}</td>
-                  
-                  <td className="border border-white">
-                  <button onClick={() => handleViewLink(product.permalink)} title="Enlace">
-                        <FaEye />
-                      </button>
-                    <button title="Agregar a comparativa">
-                      <FaPlus />
-                    </button>
-                  </td>
+              {products.map((product) => {
+                  return (
+                      <tr key={product.id}>
+                        <td className="w-1/10 border border-white" style={{ padding: '2px', width: '500px' }}>
+                              <a
+                                  href={product.permalink}
+                                  style={{
+                                      padding: '2px',
+                                      textDecoration: 'none', // Evita el subrayado por defecto
+                                      color: 'white', // Cambia el color del texto
+                                      borderBottom: '1px solid transparent', // Línea de subrayado transparente
+                                      transition: 'border-color 0.3s ease', // Agrega transición suave al color de la línea
+                                  }}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title="Ver en Mercado Libre"
+                                  onMouseEnter={(e) => { e.target.style.borderBottomColor = 'white'; } } // Cambia el color de la línea al pasar el mouse sobre el enlace
+                                  onMouseLeave={(e) => { e.target.style.borderBottomColor = 'transparent'; } } // Restaura el color de la línea cuando el mouse deja el enlace
+                              >
+                                  {product.title}
+                              </a>
+                          </td>
+                          <td className="border border-white" style={{ padding: '2px', width: '130px'}}>$ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
 
-                </tr>
-              ))}
+
+                          <td className="border border-white" style={{ padding: '2px' }}>
+                              <Image src={product.thumbnail} alt={product.title} width="100" height="70" />
+                          </td>
+
+                          <td className="border border-white">
+                              <button title="Agregar a comparativa">
+                                  <FaPlus />
+                              </button>
+                          </td>
+
+                      </tr>
+                  );
+              })}
             </tbody>
           </table>
         ) : (
