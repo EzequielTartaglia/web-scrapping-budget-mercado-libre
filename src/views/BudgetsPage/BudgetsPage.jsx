@@ -8,6 +8,7 @@ export default function BudgetsPage() {
   const [province, setProvince] = useState('Buenos Aires');
   const [sortOrder, setSortOrder] = useState('price_desc');
   const [products, setProducts] = useState([]);
+  const [selectedProductLink, setSelectedProductLink] = useState(null);
 
   // Lista de provincias de Argentina
   const argentinaProvinces = [
@@ -65,6 +66,10 @@ export default function BudgetsPage() {
     searchProducts();
   };
 
+  const handleViewLink = (link) => {
+    window.open(link, '_blank');
+  };
+
   // Se ejecuta al montar el componente para realizar la búsqueda inicial
   useEffect(() => {
     searchProducts();
@@ -111,15 +116,16 @@ export default function BudgetsPage() {
                     </a>
                   </td>
                   <td className="border border-white">${product.price}</td>
+                  
                   <td className="border border-white">
-                    <button title="Enlace">
-                      <FaEye />
-                    </button>
+                  <button onClick={() => handleViewLink(product.permalink)} title="Enlace">
+                        <FaEye />
+                      </button>
                     <button title="Agregar a comparativa">
                       <FaPlus />
                     </button>
-
                   </td>
+
                 </tr>
               ))}
             </tbody>
