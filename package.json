@@ -1,0 +1,38 @@
+{
+  "name": "invoicing-system-nextjs-mysql",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "services:up": "powershell.exe -ExecutionPolicy Bypass -File ./start-services.ps1",
+    "dev": "next dev",
+    "db:dev:up": "npm run services:up && npm run dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "axios": "^1.5.1",
+    "bcrypt": "^5.1.1",
+    "crypto": "^1.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.6.1",
+    "next": "13.5.3",
+    "npm": "^10.2.5",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-feather": "^2.0.10",
+    "react-hot-toast": "^2.4.1",
+    "xlsx": "^0.18.5",
+    "react-icons": "^5.0.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest"
+  }
+}
