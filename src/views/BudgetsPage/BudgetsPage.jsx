@@ -7,9 +7,8 @@ import Image from 'next/image';
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
   const [province, setProvince] = useState('Buenos Aires');
-  const [sortOrder, setSortOrder] = useState('price_desc');
+  const [sortOrder, setSortOrder] = useState('price_asc');
   const [products, setProducts] = useState([]);
-  const [selectedProductLink, setSelectedProductLink] = useState(null);
 
   // Lista de provincias de Argentina
   const argentinaProvinces = [
@@ -41,7 +40,7 @@ export default function BudgetsPage() {
   const searchProducts = async () => {
     try {
       const response = await fetch(
-        `https://api.mercadolibre.com/sites/MLA/search?q=${query}&adress.state.name=${province}&sort=${sortOrder}
+        `https://api.mercadolibre.com/sites/MLA/search?q=${query}&adress.state.name=${province}&sort=${sortOrder}&status=active&site_id=MLA
         `);
       const data = await response.json();
       setProducts(data.results);
