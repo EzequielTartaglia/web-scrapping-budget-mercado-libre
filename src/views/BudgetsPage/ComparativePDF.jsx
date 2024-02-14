@@ -16,7 +16,7 @@ const ComparativePDF = ({ products }) => {
       });
 
       // Guardamos el documento PDF
-      doc.save('comparativa.pdf');
+      doc.save('Comparativa_Mercado_Libre.pdf');
     };
 
     makeComparativePDF();
