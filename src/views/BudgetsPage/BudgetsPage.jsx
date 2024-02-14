@@ -213,15 +213,16 @@ export default function BudgetsPage() {
         <button type="submit" className="ml-2 bg-blue-500 text-white px-4 py-2 rounded">Buscar</button>
       </form>
       
-      <div style={{ position: 'fixed', top: '20px', right: '20px' }}>
-        <button onClick={toggleCartVisibility} className="relative">
-          <FaShoppingCart size={24} />
-          {cartItemCount > 0 && (
-            <span className="absolute top-0 right-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">{cartItemCount}</span>
-          )}
-        </button>
+      <div style={{ position: 'fixed', bottom: '50px', right: '20px' }}>
+      <button onClick={toggleCartVisibility} className="relative bg-blue-500 rounded-full w-12 h-12 flex items-center justify-center">
+        <FaShoppingCart size={24} color="white" />
+        {cartItemCount > 0 && (
+          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">{cartItemCount}</span>
+        )}
+      </button>
+
         {cartVisible && (
-          <div className="absolute top-full right-0 bg-white border border-gray-300 shadow-lg p-4 mt-2 cart-container" style={{"color":"black"}}>
+          <div className="absolute bottom-full right-0 bg-white border border-gray-300 shadow-lg p-4 mt-2 cart-container" style={{"color":"black"}}>
             {cartItems.length > 0 ? (
               <ul>
                 {cartItems.map((item, index) => (
