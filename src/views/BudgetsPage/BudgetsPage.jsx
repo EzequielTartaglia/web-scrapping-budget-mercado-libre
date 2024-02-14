@@ -1,12 +1,12 @@
 'use client'
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaEye, FaPlus } from 'react-icons/fa';
 import Image from 'next/image';
 
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
-  const [province, setProvince] = useState('Buenos Aires');
+  //const [province, setProvince] = useState('Buenos Aires');
+  const [country, setCountry] = useState('MLA'); 
   const [sortOrder, setSortOrder] = useState('price_asc');
   const [products, setProducts] = useState([]);
 
@@ -37,11 +37,19 @@ export default function BudgetsPage() {
     'Tucumán'
   ];
 
+  const countries = [
+    { code: 'MLA', name: 'Argentina' },
+    { code: 'MPY', name: 'Paraguay' },
+    { code: 'MLC', name: 'Chile' },
+    { code: 'MLU', name: 'Uruguay' }
+  ];
+
   const searchProducts = async () => {
     try {
       const response = await fetch(
-        `https://api.mercadolibre.com/sites/MLA/search?q=${query}&adress.state.name=${province}&sort=${sortOrder}&status=active&site_id=MLA
-        `);
+        //`https://api.mercadolibre.com/sites/${country}/search?q=${query}&adress.state.name=${province}&country=${country}&sort=${sortOrder}&status=active&site_id=${country}`
+        `https://api.mercadolibre.com/sites/${country}/search?q=${query}&country=${country}&sort=${sortOrder}&status=active&site_id=${country}`
+      );
       const data = await response.json();
       setProducts(data.results);
     } catch (error) {
@@ -53,8 +61,12 @@ export default function BudgetsPage() {
     setQuery(event.target.value);
   };
 
-  const handleProvinceChange = (event) => {
+/*   const handleProvinceChange = (event) => {
     setProvince(event.target.value);
+  }; */
+
+  const handleCountryChange = (event) => {
+    setCountry(event.target.value);
   };
 
   const handleSortOrderChange = (event) => {
@@ -86,9 +98,14 @@ export default function BudgetsPage() {
           className="p-2 border border-black rounded text-black"
           style={{ width: '300px' }}
         />
-        <select value={province} onChange={handleProvinceChange} className="ml-2 p-2 border border-black rounded text-black">
+    {/*     <select value={province} onChange={handleProvinceChange} className="ml-2 p-2 border border-black rounded text-black">
           {argentinaProvinces.map((prov) => (
             <option key={prov} value={prov}>{prov}</option>
+          ))}
+        </select> */}
+        <select value={country} onChange={handleCountryChange} className="ml-2 p-2 border border-black rounded text-black">
+          {countries.map((c) => (
+            <option key={c.code} value={c.code}>{c.name}</option>
           ))}
         </select>
         <select value={sortOrder} onChange={handleSortOrderChange} className="ml-2 p-2 border border-black rounded text-black">
@@ -109,44 +126,38 @@ export default function BudgetsPage() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => {
-                  return (
-                      <tr key={product.id}>
-                        <td className="w-1/10 border border-white" style={{ padding: '2px', width: '500px' }}>
-                              <a
-                                  href={product.permalink}
-                                  style={{
-                                      padding: '2px',
-                                      textDecoration: 'none', // Evita el subrayado por defecto
-                                      color: 'white', // Cambia el color del texto
-                                      borderBottom: '1px solid transparent', // Línea de subrayado transparente
-                                      transition: 'border-color 0.3s ease', // Agrega transición suave al color de la línea
-                                  }}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  title="Ver en Mercado Libre"
-                                  onMouseEnter={(e) => { e.target.style.borderBottomColor = 'white'; } } // Cambia el color de la línea al pasar el mouse sobre el enlace
-                                  onMouseLeave={(e) => { e.target.style.borderBottomColor = 'transparent'; } } // Restaura el color de la línea cuando el mouse deja el enlace
-                              >
-                                  {product.title}
-                              </a>
-                          </td>
-                          <td className="border border-white" style={{ padding: '2px', width: '150px', textAlign: 'center' }}>$ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-
-
-                          <td className="border border-white" style={{ padding: '2px' }}>
-                              <Image src={product.thumbnail} alt={product.title} width="100" height="70" />
-                          </td>
-
-                          <td className="border border-white" style={{textAlign: 'center' }}>
-                              <button title="Agregar a comparativa">
-                                  <FaPlus />
-                              </button>
-                          </td>
-
-                      </tr>
-                  );
-              })}
+              {products.map((product) => (
+                <tr key={product.id}>
+                  <td className="w-1/10 border border-white" style={{ padding: '2px', width: '500px' }}>
+                    <a
+                      href={product.permalink}
+                      style={{
+                        padding: '2px',
+                        textDecoration: 'none',
+                        color: 'white',
+                        borderBottom: '1px solid transparent',
+                        transition: 'border-color 0.3s ease',
+                      }}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Ver en Mercado Libre"
+                      onMouseEnter={(e) => { e.target.style.borderBottomColor = 'white'; }}
+                      onMouseLeave={(e) => { e.target.style.borderBottomColor = 'transparent'; }}
+                    >
+                      {product.title}
+                    </a>
+                  </td>
+                  <td className="border border-white" style={{ padding: '2px', width: '150px', textAlign: 'center' }}>$ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td className="border border-white" style={{ padding: '2px' }}>
+                    <Image src={product.thumbnail} alt={product.title} width="100" height="70" />
+                  </td>
+                  <td className="border border-white" style={{ textAlign: 'center' }}>
+                    <button title="Agregar a comparativa">
+                      <FaPlus />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         ) : (
