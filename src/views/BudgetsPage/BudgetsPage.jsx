@@ -201,7 +201,7 @@ export default function BudgetsPage() {
       </button>
 
         {cartVisible && (
-          <div className="absolute bottom-full right-0 bg-white border border-gray-300 shadow-lg p-4 mt-2 cart-container" style={{"color":"black"}}>
+          <div className="w-[800px] absolute bottom-full right-0 bg-white border border-gray-300 shadow-lg p-4 mt-2 cart-container" style={{"color":"black"}}>
             {cartItems.length > 0 ? (
               <ul>
                 {cartItems.map((item, index) => (
