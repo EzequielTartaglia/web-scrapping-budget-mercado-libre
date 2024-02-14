@@ -1,7 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { FaEye, FaPlus, FaShoppingCart, FaTrash } from 'react-icons/fa';
+import { FaEye, FaFilePdf, FaPlus, FaShoppingCart, FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
+import ComparativePDF from './ComparativePDF';
 
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
@@ -13,6 +14,7 @@ export default function BudgetsPage() {
   //Carrito
   const [cartItems, setCartItems] = useState([]); 
   const [cartVisible, setCartVisible] = useState(false);
+  const [showComparativePDF, setShowComparativePDF] = useState(false); // Estado para controlar la visibilidad del ComparativePDF
 
   // Lista de provincias de Argentina
   const argentinaProvinces = [
@@ -178,6 +180,15 @@ useEffect(() => {
     window.open(link, '_blank');
   };
 
+  const handleDownloadPDF = () => {
+    makeComparativePDF(); // Genera el PDF
+
+    // Cambia el estado a false después de 1 segundo para evitar múltiples descargas
+    setTimeout(() => {
+      setShowComparativePDF(false);
+    }, 1000);
+  };
+  
   // Se ejecuta al montar el componente para realizar la búsqueda inicial
   useEffect(() => {
     searchProducts();
@@ -233,7 +244,14 @@ useEffect(() => {
                   <span>Total:</span>
                   <span>${cartItems.reduce((total, item) => total + item.price, 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                 </li>
-                <button onClick={clearCart} className="bg-red-500 text-white mt-4 px-4 py-2 rounded mb-2" title='Vaciar Carrito'><FaTrash></FaTrash></button>
+                <div className="flex justify-between">
+                  <button onClick={clearCart} className="bg-red-500 text-white mt-4 px-4 py-2 rounded mb-2 mr-2" title='Vaciar Carrito'><FaTrash /></button>
+                  <button onClick={() => {
+                  setShowComparativePDF(true);
+                  setTimeout(() => {
+                    setShowComparativePDF(false);
+                  }, 1000);}} className="bg-blue-500 text-white mt-4 px-4 py-2 rounded mb-2" title='Compilar Comparativa'><FaFilePdf /></button>
+                </div>
               </ul>
             ) : (
               <p>No hay productos en el carrito</p>
@@ -291,6 +309,7 @@ useEffect(() => {
           <p>No se encontraron coincidencias.</p>
         )}
       </div>     
+      {showComparativePDF && <ComparativePDF products={cartItems} />}
     </main>
   );
 }
