@@ -186,47 +186,13 @@ export default function BudgetsPage() {
   }, []);
 
   return (
-    
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-          <div>
-      <nav className="flex items-center justify-between p-4 bg-white">
-        <h1 className="text-lg" style={{"color":"black"}}>Productos Seleccionados</h1>
-        <div className="relative">
-          <button onClick={toggleCartVisibility} className="relative">
-            <FaShoppingCart size={24} />
-            {cartItemCount > 0 && (
-              <span className="absolute top-0 right-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">{cartItemCount}</span>
-            )}
-          </button>
-          {cartVisible && (
-            <div className="absolute top-full right-0 bg-white border border-gray-300 shadow-lg p-4 mt-2 cart-container" style={{"color":"black"}}>
-              {cartItems.length > 0 ? (
-                <ul>
-                  {cartItems.map((item, index) => (
-                    <li key={index} className="flex items-center justify-between mb-2">
-                      <span>{item.title}</span>
-                      <span>${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                    </li>
-                  ))}
-                  <li className="flex justify-between">
-                    <span>Total:</span>
-                    <span>${cartItems.reduce((total, item) => total + item.price, 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                  </li>
-                </ul>
-              ) : (
-                <p>No hay productos en el carrito</p>
-              )}
-            </div>
-          )}
-        </div>
-      </nav>
-      </div>
-      <form onSubmit={handleSearchSubmit} className="mt-4 mb-4">
+ <form onSubmit={handleSearchSubmit} className="mt-4 mb-4">
         <input
           type="text"
           value={query}
           onChange={handleSearchInputChange}
-          placeholder="Search products..."
+          placeholder="Buscar productos..."
           className="p-2 border border-black rounded text-black"
           style={{ width: '300px' }}
         />
@@ -246,6 +212,35 @@ export default function BudgetsPage() {
         </select>
         <button type="submit" className="ml-2 bg-blue-500 text-white px-4 py-2 rounded">Buscar</button>
       </form>
+      
+      <div style={{ position: 'fixed', top: '20px', right: '20px' }}>
+        <button onClick={toggleCartVisibility} className="relative">
+          <FaShoppingCart size={24} />
+          {cartItemCount > 0 && (
+            <span className="absolute top-0 right-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">{cartItemCount}</span>
+          )}
+        </button>
+        {cartVisible && (
+          <div className="absolute top-full right-0 bg-white border border-gray-300 shadow-lg p-4 mt-2 cart-container" style={{"color":"black"}}>
+            {cartItems.length > 0 ? (
+              <ul>
+                {cartItems.map((item, index) => (
+                  <li key={index} className="flex items-center justify-between mb-2">
+                    <span>{item.title}</span>
+                    <span>${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </li>
+                ))}
+                <li className="flex justify-between">
+                  <span>Total:</span>
+                  <span>${cartItems.reduce((total, item) => total + item.price, 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                </li>
+              </ul>
+            ) : (
+              <p>No hay productos en el carrito</p>
+            )}
+          </div>
+        )}
+      </div>
       <div className="mt-4">
         {products.length > 0 ? (
           <table className="table-auto border border-white">
@@ -295,7 +290,7 @@ export default function BudgetsPage() {
         ) : (
           <p>No products found.</p>
         )}
-      </div>
+      </div>     
     </main>
   );
 }
