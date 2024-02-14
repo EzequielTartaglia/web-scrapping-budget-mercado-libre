@@ -16,29 +16,9 @@ export default function BudgetsPage() {
 
   // Lista de provincias de Argentina
   const argentinaProvinces = [
-    'Buenos Aires',
-    'Catamarca',
-    'Chaco',
-    'Chubut',
-    'Córdoba',
-    'Corrientes',
-    'Entre Ríos',
-    'Formosa',
-    'Jujuy',
-    'La Pampa',
-    'La Rioja',
-    'Mendoza',
-    'Misiones',
-    'Neuquén',
-    'Río Negro',
-    'Salta',
-    'San Juan',
-    'San Luis',
-    'Santa Cruz',
-    'Santa Fe',
-    'Santiago del Estero',
-    'Tierra del Fuego',
-    'Tucumán'
+    'Buenos Aires', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba', 'Corrientes', 'Entre Ríos', 'Formosa',
+    'Jujuy', 'La Pampa', 'La Rioja', 'Mendoza', 'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan',
+    'San Luis', 'Santa Cruz', 'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'
   ];
 
   const countries = [
@@ -47,7 +27,6 @@ export default function BudgetsPage() {
     { code: 'MLC', name: 'Chile' },
     { code: 'MLU', name: 'Uruguay' }
   ];
-
 
 
   // Función para agregar un producto al carrito
@@ -289,7 +268,7 @@ export default function BudgetsPage() {
             </tbody>
           </table>
         ) : (
-          <p>No products found.</p>
+          <p>No se encontraron coincidencias.</p>
         )}
       </div>     
     </main>
