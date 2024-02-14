@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { FaEye, FaPlus, FaShoppingCart } from 'react-icons/fa';
+import { FaEye, FaPlus, FaShoppingCart, FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
 
 export default function BudgetsPage() {
@@ -41,6 +41,25 @@ export default function BudgetsPage() {
   const toggleCartVisibility = () => {
     setCartVisible(!cartVisible);
   };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  // Resta para esconder el carrito
+useEffect(() => {
+  const handleUnload = () => {
+    clearCart();
+  };
+
+  if (cartVisible) {
+    window.addEventListener('unload', handleUnload);
+  }
+
+  return () => {
+    window.removeEventListener('unload', handleUnload);
+  };
+}, [cartVisible]);
 
   // Resta para esconder el carrito
   useEffect(() => {
@@ -214,6 +233,7 @@ export default function BudgetsPage() {
                   <span>Total:</span>
                   <span>${cartItems.reduce((total, item) => total + item.price, 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                 </li>
+                <button onClick={clearCart} className="bg-red-500 text-white mt-4 px-4 py-2 rounded mb-2" title='Vaciar Carrito'><FaTrash></FaTrash></button>
               </ul>
             ) : (
               <p>No hay productos en el carrito</p>
