@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { FaEye, FaPlus } from 'react-icons/fa';
+import { FaEye, FaPlus, FaShoppingCart } from 'react-icons/fa';
 import Image from 'next/image';
 
 export default function BudgetsPage() {
@@ -9,6 +9,10 @@ export default function BudgetsPage() {
   const [country, setCountry] = useState('MLA'); 
   const [sortOrder, setSortOrder] = useState('price_asc');
   const [products, setProducts] = useState([]);
+
+  //Carrito
+  const [cartItems, setCartItems] = useState([]); 
+  const [cartVisible, setCartVisible] = useState(false);
 
   // Lista de provincias de Argentina
   const argentinaProvinces = [
@@ -43,6 +47,100 @@ export default function BudgetsPage() {
     { code: 'MLC', name: 'Chile' },
     { code: 'MLU', name: 'Uruguay' }
   ];
+
+
+
+  // Función para agregar un producto al carrito
+  const addToCart = (product) => {
+    setCartItems([...cartItems, product]);
+  };
+
+  // Calcula el total de productos en el carrito
+  const cartItemCount = cartItems.length;
+
+  // Función para mostrar u ocultar el carrito
+  const toggleCartVisibility = () => {
+    setCartVisible(!cartVisible);
+  };
+
+  // Resta para esconder el carrito
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (!event.target.closest('.cart-container')) {
+        setCartVisible(false);
+      }
+    };
+
+    if (cartVisible) {
+      document.addEventListener('click', handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, [cartVisible]);
+
+  // Resta para esconder el carrito
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape') {
+        setCartVisible(false);
+      }
+    };
+
+    if (cartVisible) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [cartVisible]);
+
+  // Resta para esconder el carrito
+  useEffect(() => {
+    const handleScroll = () => {
+      setCartVisible(false);
+    };
+
+    if (cartVisible) {
+      window.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [cartVisible]);
+
+  // Resta para esconder el carrito
+  useEffect(() => {
+    const handleResize = () => {
+      setCartVisible(false);
+    };
+
+    if (cartVisible) {
+      window.addEventListener('resize', handleResize);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [cartVisible]);
+
+  // Resta para esconder el carrito
+  useEffect(() => {
+    const handleUnload = () => {
+      setCartVisible(false);
+    };
+
+    if (cartVisible) {
+      window.addEventListener('unload', handleUnload);
+    }
+
+    return () => {
+      window.removeEventListener('unload', handleUnload);
+    };
+  }, [cartVisible]);
 
   const searchProducts = async () => {
     try {
@@ -88,8 +186,42 @@ export default function BudgetsPage() {
   }, []);
 
   return (
+    
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <form onSubmit={handleSearchSubmit} className="mb-4">
+          <div>
+      <nav className="flex items-center justify-between p-4 bg-white">
+        <h1 className="text-lg" style={{"color":"black"}}>Productos Seleccionados</h1>
+        <div className="relative">
+          <button onClick={toggleCartVisibility} className="relative">
+            <FaShoppingCart size={24} />
+            {cartItemCount > 0 && (
+              <span className="absolute top-0 right-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">{cartItemCount}</span>
+            )}
+          </button>
+          {cartVisible && (
+            <div className="absolute top-full right-0 bg-white border border-gray-300 shadow-lg p-4 mt-2 cart-container" style={{"color":"black"}}>
+              {cartItems.length > 0 ? (
+                <ul>
+                  {cartItems.map((item, index) => (
+                    <li key={index} className="flex items-center justify-between mb-2">
+                      <span>{item.title}</span>
+                      <span>${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    </li>
+                  ))}
+                  <li className="flex justify-between">
+                    <span>Total:</span>
+                    <span>${cartItems.reduce((total, item) => total + item.price, 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  </li>
+                </ul>
+              ) : (
+                <p>No hay productos en el carrito</p>
+              )}
+            </div>
+          )}
+        </div>
+      </nav>
+      </div>
+      <form onSubmit={handleSearchSubmit} className="mt-4 mb-4">
         <input
           type="text"
           value={query}
@@ -152,7 +284,7 @@ export default function BudgetsPage() {
                     <Image src={product.thumbnail} alt={product.title} width="100" height="70" />
                   </td>
                   <td className="border border-white" style={{ textAlign: 'center' }}>
-                    <button title="Agregar a comparativa">
+                    <button title="Agregar a comparativa" onClick={() => addToCart(product)}>
                       <FaPlus />
                     </button>
                   </td>
