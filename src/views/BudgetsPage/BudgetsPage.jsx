@@ -192,6 +192,7 @@ useEffect(() => {
   // Se ejecuta al montar el componente para realizar la búsqueda inicial
   useEffect(() => {
     searchProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
