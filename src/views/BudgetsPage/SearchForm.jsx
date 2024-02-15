@@ -1,7 +1,5 @@
 'use client'
 
-import countries from './countries';
-
 const SearchForm = ({
   query,
   country,
@@ -10,6 +8,7 @@ const SearchForm = ({
   handleCountryChange,
   handleSortOrderChange,
   handleSearchSubmit,
+  countries,
 }) => {
   return (
     <form onSubmit={handleSearchSubmit} className="mt-4 mb-4">

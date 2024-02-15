@@ -194,7 +194,6 @@ useEffect(() => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      
       <SearchForm
         query={query}
         country={country}
@@ -203,6 +202,7 @@ useEffect(() => {
         handleCountryChange={handleCountryChange}
         handleSortOrderChange={handleSortOrderChange}
         handleSearchSubmit={handleSearchSubmit}
+        countries={countries}
       />
       
       <div style={{ position: 'fixed', bottom: '50px', right: '20px' }}>
