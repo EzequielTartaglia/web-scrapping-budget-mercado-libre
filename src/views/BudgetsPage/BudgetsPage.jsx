@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEye, FaFilePdf, FaPlus, FaShoppingCart, FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
-import ComparativePDF from './ComparativePDF';
+import { jsPDF } from 'jspdf';
 
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
@@ -33,6 +33,7 @@ export default function BudgetsPage() {
 
   // Función para agregar un producto al carrito
   const addToCart = (product) => {
+    setShowComparativePDF(false);
     setCartItems([...cartItems, product]);
   };
 
@@ -181,13 +182,25 @@ useEffect(() => {
   };
 
   const handleDownloadPDF = () => {
-    makeComparativePDF(); // Genera el PDF
+    const doc = new jsPDF();
+    let yPos = 10;
 
-    // Cambia el estado a false después de 1 segundo para evitar múltiples descargas
-    setTimeout(() => {
-      setShowComparativePDF(false);
-    }, 1000);
+    cartItems.forEach((product) => {
+      doc.text(product.title + ' - $' + product.price, 10, yPos);
+      yPos += 10;
+    });
+
+    doc.save('Comparativa_Mercado_Libre.pdf');
+    setShowComparativePDF(true); 
+
+    // Espera un momento antes de limpiar el carrito para asegurarte de que la descarga del PDF se haya completado
+  setTimeout(() => {
+    clearCart();
+    setCartVisible(false) // Limpia el carrito después de la descarga del PDF
+  }, 100); // Espera 1 segundo antes de limpiar el carrito (puedes ajustar este tiempo según sea necesario)
   };
+  
+  
   
   // Se ejecuta al montar el componente para realizar la búsqueda inicial
   useEffect(() => {
@@ -247,11 +260,7 @@ useEffect(() => {
                 </li>
                 <div className="flex justify-between">
                   <button onClick={clearCart} className="bg-red-500 text-white mt-4 px-4 py-2 rounded mb-2 mr-2" title='Vaciar Carrito'><FaTrash /></button>
-                  <button onClick={() => {
-                  setShowComparativePDF(true);
-                  setTimeout(() => {
-                    setShowComparativePDF(false);
-                  }, 1000);}} className="bg-blue-500 text-white mt-4 px-4 py-2 rounded mb-2" title='Compilar Comparativa'><FaFilePdf /></button>
+                  <button onClick={handleDownloadPDF} className="bg-blue-500 text-white mt-4 px-4 py-2 rounded mb-2" title='Compilar Comparativa'><FaFilePdf /></button>
                 </div>
               </ul>
             ) : (
@@ -310,7 +319,6 @@ useEffect(() => {
           <p>No se encontraron coincidencias.</p>
         )}
       </div>     
-      {showComparativePDF && <ComparativePDF products={cartItems} />}
     </main>
   );
 }
