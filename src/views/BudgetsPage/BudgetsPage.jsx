@@ -4,6 +4,9 @@ import { FaEye, FaFilePdf, FaPlus, FaShoppingCart, FaTrash } from 'react-icons/f
 import Image from 'next/image';
 import { jsPDF } from 'jspdf';
 
+//import argentinaProvinces from './provinces';
+import countries from './countries';
+
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
   //const [province, setProvince] = useState('Buenos Aires');
@@ -15,21 +18,6 @@ export default function BudgetsPage() {
   const [cartItems, setCartItems] = useState([]); 
   const [cartVisible, setCartVisible] = useState(false);
   const [showComparativePDF, setShowComparativePDF] = useState(false); // Estado para controlar la visibilidad del ComparativePDF
-
-  // Lista de provincias de Argentina
-  const argentinaProvinces = [
-    'Buenos Aires', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba', 'Corrientes', 'Entre Ríos', 'Formosa',
-    'Jujuy', 'La Pampa', 'La Rioja', 'Mendoza', 'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan',
-    'San Luis', 'Santa Cruz', 'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'
-  ];
-
-  const countries = [
-    { code: 'MLA', name: 'Argentina' },
-    { code: 'MPY', name: 'Paraguay' },
-    { code: 'MLC', name: 'Chile' },
-    { code: 'MLU', name: 'Uruguay' }
-  ];
-
 
   // Función para agregar un producto al carrito
   const addToCart = (product) => {
@@ -177,10 +165,6 @@ useEffect(() => {
     searchProducts();
   };
 
-  const handleViewLink = (link) => {
-    window.open(link, '_blank');
-  };
-
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     let yPos = 10;
@@ -193,11 +177,10 @@ useEffect(() => {
     doc.save('Comparativa_Mercado_Libre.pdf');
     setShowComparativePDF(true); 
 
-    // Espera un momento antes de limpiar el carrito para asegurarte de que la descarga del PDF se haya completado
-  setTimeout(() => {
-    clearCart();
-    setCartVisible(false) // Limpia el carrito después de la descarga del PDF
-  }, 100); // Espera 1 segundo antes de limpiar el carrito (puedes ajustar este tiempo según sea necesario)
+    setTimeout(() => {
+      clearCart();
+      setCartVisible(false); 
+    }, 100); 
   };
   
   
