@@ -171,10 +171,10 @@ useEffect(() => {
     const doc = new jsPDF();
   
     // Títulos de las columnas
-    const headers = [["Producto", "Precio","Link", "Imagen"]];
+    const headers = [["Producto", "Precio","Link"]];
   
     // Datos de los productos
-    const data = cartItems.map(product => [product.title, "$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }),product.permalink, product.thumbnail]);
+    const data = cartItems.map(product => [product.title, "$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }),product.permalink]);
 
     doc.text("Comparativa de precios", 10, 10);
   
