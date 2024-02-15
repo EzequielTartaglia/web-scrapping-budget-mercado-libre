@@ -6,6 +6,7 @@ import { jsPDF } from 'jspdf';
 
 //import argentinaProvinces from './provinces';
 import countries from './countries';
+import SearchForm from './SearchForm';
 
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
@@ -17,16 +18,16 @@ export default function BudgetsPage() {
   //Carrito
   const [cartItems, setCartItems] = useState([]); 
   const [cartVisible, setCartVisible] = useState(false);
-  const [showComparativePDF, setShowComparativePDF] = useState(false); // Estado para controlar la visibilidad del ComparativePDF
+  const [showComparativePDF, setShowComparativePDF] = useState(false); 
+
+  // Calcula el total de productos en el carrito
+  const cartItemCount = cartItems.length;
 
   // Función para agregar un producto al carrito
   const addToCart = (product) => {
     setShowComparativePDF(false);
     setCartItems([...cartItems, product]);
   };
-
-  // Calcula el total de productos en el carrito
-  const cartItemCount = cartItems.length;
 
   // Función para mostrar u ocultar el carrito
   const toggleCartVisibility = () => {
@@ -193,31 +194,16 @@ useEffect(() => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
- <form onSubmit={handleSearchSubmit} className="mt-4 mb-4">
-        <input
-          type="text"
-          value={query}
-          onChange={handleSearchInputChange}
-          placeholder="Buscar productos..."
-          className="p-2 border border-black rounded text-black"
-          style={{ width: '300px' }}
-        />
-    {/*     <select value={province} onChange={handleProvinceChange} className="ml-2 p-2 border border-black rounded text-black">
-          {argentinaProvinces.map((prov) => (
-            <option key={prov} value={prov}>{prov}</option>
-          ))}
-        </select> */}
-        <select value={country} onChange={handleCountryChange} className="ml-2 p-2 border border-black rounded text-black">
-          {countries.map((c) => (
-            <option key={c.code} value={c.code}>{c.name}</option>
-          ))}
-        </select>
-        <select value={sortOrder} onChange={handleSortOrderChange} className="ml-2 p-2 border border-black rounded text-black">
-          <option value="price_desc">Precio: Mayor a Menor</option>
-          <option value="price_asc">Precio: Menor a Mayor</option>
-        </select>
-        <button type="submit" className="ml-2 bg-blue-500 text-white px-4 py-2 rounded">Buscar</button>
-      </form>
+      
+      <SearchForm
+        query={query}
+        country={country}
+        sortOrder={sortOrder}
+        handleSearchInputChange={handleSearchInputChange}
+        handleCountryChange={handleCountryChange}
+        handleSortOrderChange={handleSortOrderChange}
+        handleSearchSubmit={handleSearchSubmit}
+      />
       
       <div style={{ position: 'fixed', bottom: '50px', right: '20px' }}>
       <button onClick={toggleCartVisibility} className="relative bg-blue-500 rounded-full w-12 h-12 flex items-center justify-center">
