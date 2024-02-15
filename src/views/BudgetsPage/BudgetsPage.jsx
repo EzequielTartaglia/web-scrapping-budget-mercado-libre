@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { FaEye, FaFilePdf, FaPlus, FaShoppingCart, FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
 import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 //import argentinaProvinces from './provinces';
 import countries from './countries';
@@ -168,21 +169,37 @@ useEffect(() => {
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
-    let yPos = 10;
+  
+    // Títulos de las columnas
+    const headers = [["Producto", "Precio","Link", "Imagen"]];
+  
+    // Datos de los productos
+    const data = cartItems.map(product => [product.title, "$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }),product.permalink, product.thumbnail]);
 
-    cartItems.forEach((product) => {
-      doc.text(product.title + ' - $' + product.price, 10, yPos);
-      yPos += 10;
+    doc.text("Comparativa de precios", 10, 10);
+  
+    // Generar la tabla
+    doc.autoTable({
+      head: headers,
+      body: data,
+      startY: 20, // Posición inicial de la tabla
+      theme: "plain", // Tema de la tabla
+      styles: {
+        textColor: [100, 100, 100], // Color del texto
+        lineColor: [100, 100, 100], // Color de las líneas
+        lineWidth: 0.1 // Ancho de las líneas
+      }
     });
-
+  
     doc.save('Comparativa_Mercado_Libre.pdf');
-    setShowComparativePDF(true); 
-
+    setShowComparativePDF(true);
+  
     setTimeout(() => {
       clearCart();
-      setCartVisible(false); 
-    }, 100); 
+      setCartVisible(false);
+    }, 100);
   };
+  
   
   
   
