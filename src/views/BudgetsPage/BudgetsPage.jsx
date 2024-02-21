@@ -170,24 +170,27 @@ useEffect(() => {
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
   
-    // Títulos de las columnas
-    const headers = [["Producto", "Precio","Link"]];
-  
     // Datos de los productos
-    const data = cartItems.map(product => [product.title, "$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }),product.permalink]);
-
-    doc.text("Comparativa de precios", 10, 10);
+    cartItems.forEach((product, index) => {
+      // Agregar la imagen al documento PDF
+      const imgData = product.thumbnail;
+      const imgWidth = 40; // Ancho de la imagen en el PDF
+      const imgHeight = 40; // Altura de la imagen en el PDF
+      const x = 15; // Posición X para la imagen
+      const y = 10 + index * 60; // Posición Y para cada producto
   
-    // Generar la tabla
-    doc.autoTable({
-      head: headers,
-      body: data,
-      startY: 20, // Posición inicial de la tabla
-      theme: "plain", // Tema de la tabla
-      styles: {
-        textColor: [100, 100, 100], // Color del texto
-        lineColor: [100, 100, 100], // Color de las líneas
-        lineWidth: 0.1 // Ancho de las líneas
+      doc.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight); // Agregar la imagen al PDF
+  
+      // Agregar título
+      const titleLines = doc.splitTextToSize(product.title, 130); // Dividir el título en líneas si es necesario
+      doc.text(titleLines, x + imgWidth + 10, y + 10);
+  
+      // Agregar precio
+      doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }), x + imgWidth + 10, y + 30);
+  
+      // Agregar línea divisoria
+      if (index < cartItems.length - 1) {
+        doc.line(15, y + 50, 195, y + 50); // Línea divisoria
       }
     });
   
@@ -199,6 +202,9 @@ useEffect(() => {
       setCartVisible(false);
     }, 100);
   };
+  
+  
+  
   
   
   
