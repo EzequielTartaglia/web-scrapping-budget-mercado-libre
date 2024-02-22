@@ -5,56 +5,49 @@ import Image from 'next/image';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
-//import argentinaProvinces from './provinces';
 import countries from './countries';
 import SearchForm from './SearchForm';
 
 export default function BudgetsPage() {
   const [query, setQuery] = useState('');
-  //const [province, setProvince] = useState('Buenos Aires');
   const [country, setCountry] = useState('MLA'); 
   const [sortOrder, setSortOrder] = useState('price_asc');
   const [products, setProducts] = useState([]);
-
-  //Carrito
   const [cartItems, setCartItems] = useState([]); 
   const [cartVisible, setCartVisible] = useState(false);
   const [showComparativePDF, setShowComparativePDF] = useState(false); 
 
-  // Calcula el total de productos en el carrito
   const cartItemCount = cartItems.length;
 
-  // Función para agregar un producto al carrito
   const addToCart = (product) => {
     setShowComparativePDF(false);
     setCartItems([...cartItems, product]);
+    localStorage.setItem(product.id, JSON.stringify(product));
   };
 
-  // Función para mostrar u ocultar el carrito
   const toggleCartVisibility = () => {
     setCartVisible(!cartVisible);
   };
 
   const clearCart = () => {
     setCartItems([]);
+    localStorage.clear(); // Limpiar la caché del carrito
   };
 
-  // Resta para esconder el carrito
-useEffect(() => {
-  const handleUnload = () => {
-    clearCart();
-  };
+  useEffect(() => {
+    const handleUnload = () => {
+      clearCart();
+    };
 
-  if (cartVisible) {
-    window.addEventListener('unload', handleUnload);
-  }
+    if (cartVisible) {
+      window.addEventListener('unload', handleUnload);
+    }
 
-  return () => {
-    window.removeEventListener('unload', handleUnload);
-  };
-}, [cartVisible]);
+    return () => {
+      window.removeEventListener('unload', handleUnload);
+    };
+  }, [cartVisible]);
 
-  // Resta para esconder el carrito
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (!event.target.closest('.cart-container')) {
@@ -71,7 +64,6 @@ useEffect(() => {
     };
   }, [cartVisible]);
 
-  // Resta para esconder el carrito
   useEffect(() => {
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
@@ -88,7 +80,6 @@ useEffect(() => {
     };
   }, [cartVisible]);
 
-  // Resta para esconder el carrito
   useEffect(() => {
     const handleScroll = () => {
       setCartVisible(false);
@@ -103,7 +94,6 @@ useEffect(() => {
     };
   }, [cartVisible]);
 
-  // Resta para esconder el carrito
   useEffect(() => {
     const handleResize = () => {
       setCartVisible(false);
@@ -118,25 +108,24 @@ useEffect(() => {
     };
   }, [cartVisible]);
 
-  // Resta para esconder el carrito
   useEffect(() => {
-    const handleUnload = () => {
-      setCartVisible(false);
-    };
+    const cachedCartItems = getCartItemsFromCache();
+    setCartItems(cachedCartItems);
+  }, []);
 
-    if (cartVisible) {
-      window.addEventListener('unload', handleUnload);
+  const getCartItemsFromCache = () => {
+    const cachedItems = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const value = localStorage.getItem(key);
+      cachedItems.push(JSON.parse(value));
     }
-
-    return () => {
-      window.removeEventListener('unload', handleUnload);
-    };
-  }, [cartVisible]);
+    return cachedItems;
+  };
 
   const searchProducts = async () => {
     try {
       const response = await fetch(
-        //`https://api.mercadolibre.com/sites/${country}/search?q=${query}&adress.state.name=${province}&country=${country}&sort=${sortOrder}&status=active&site_id=${country}`
         `https://api.mercadolibre.com/sites/${country}/search?q=${query}&country=${country}&sort=${sortOrder}&status=active&site_id=${country}`
       );
       const data = await response.json();
@@ -149,10 +138,6 @@ useEffect(() => {
   const handleSearchInputChange = (event) => {
     setQuery(event.target.value);
   };
-
-/*   const handleProvinceChange = (event) => {
-    setProvince(event.target.value);
-  }; */
 
   const handleCountryChange = (event) => {
     setCountry(event.target.value);
@@ -170,57 +155,41 @@ useEffect(() => {
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
   
-    // Ordenar los productos por precio de menor a mayor
     const sortedCartItems = [...cartItems].sort((a, b) => a.price - b.price);
-  
-    // Obtener el precio del producto más barato
     const cheapestPrice = sortedCartItems.length > 0 ? sortedCartItems[0].price : 0;
   
-    //Ejecución
-
-    // Agregar título
-    const titleLines = doc.splitTextToSize("Analisis de compras", 130); // Dividir el título en líneas si es necesario
+    const titleLines = doc.splitTextToSize("Analisis de compras", 130);
     doc.text(titleLines, 15, 10);
 
-    // Datos de los productos
     sortedCartItems.forEach((product, index) => {
-      // Agregar la imagen al documento PDF
       const imgData = product.thumbnail;
-      const imgWidth = 40; // Ancho de la imagen en el PDF
-      const imgHeight = 40; // Altura de la imagen en el PDF
-      const x = 15; // Posición X para la imagen
-      const y = 20 + index * 80; // Posición Y para cada producto
+      const imgWidth = 40;
+      const imgHeight = 40;
+      const x = 15;
+      const y = 20 + index * 80;
   
-      doc.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight); // Agregar la imagen al PDF
+      doc.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
   
-      // Agregar título
-      const titleLines = doc.splitTextToSize(product.title, 130); // Dividir el título en líneas si es necesario
+      const titleLines = doc.splitTextToSize(product.title, 130);
       doc.text(titleLines, x + imgWidth + 10, y + 10);
 
-      // Calcular el ancho del texto del enlace
-      const linkTextWidth = doc.getStringUnitWidth('Ver enlace') * doc.internal.getFontSize(); // Ancho del texto del enlace
+      const linkColor = '#007bff';
+      const linkStyle = 'U';
 
-      // Definir el color y el estilo del enlace
-      const linkColor = '#007bff'; // Color azul suave
-      const linkStyle = 'U'; // Subrayado
-
-      // Agregar el texto del enlace con el estilo definido
       doc.setTextColor(linkColor);
-      doc.textWithLink('Ver enlace', x + imgWidth + 10, y + 30, { url: product.permalink, underline: linkStyle }); // Agregar el texto del enlace
+      doc.textWithLink('Ver enlace', x + imgWidth + 10, y + 30, { url: product.permalink, underline: linkStyle });
 
-      // Agregar precio
-      doc.setTextColor(0, 0, 0); // Restaurar color de texto a negro
+      doc.setTextColor(0, 0, 0);
       if (product.price === cheapestPrice) {
-        doc.setTextColor(255, 0, 0); // Establecer color de texto a rojo para el producto más barato
+        doc.setTextColor(255, 0, 0);
         doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) + " (Menor precio)", x + imgWidth + 10, y + 40);
-        doc.setTextColor(0, 0, 0); // Restaurar color de texto a negro
+        doc.setTextColor(0, 0, 0);
       } else {
         doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }), x + imgWidth + 10, y + 40);
       }
 
-      // Agregar línea divisoria
       if (index < sortedCartItems.length - 1) {
-        doc.line(15, y + 60, 195, y + 60); // Línea divisoria
+        doc.line(15, y + 60, 195, y + 60);
       }
     });
   
@@ -232,13 +201,9 @@ useEffect(() => {
       setCartVisible(false);
     }, 100);
   };
-  
-  
-  
-  // Se ejecuta al montar el componente para realizar la búsqueda inicial
+
   useEffect(() => {
     searchProducts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
