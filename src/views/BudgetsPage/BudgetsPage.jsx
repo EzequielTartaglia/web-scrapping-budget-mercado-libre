@@ -170,58 +170,79 @@ useEffect(() => {
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
   
+    // Función para agregar una nueva página si el contenido actual excede el límite de la página
+    const addNewPageIfNeeded = (currentPage, requiredSpace) => {
+      const pageHeight = doc.internal.pageSize.getHeight();
+      if (currentPage + requiredSpace > pageHeight) {
+        doc.addPage();
+        return 10; // Reiniciar el contador de posición Y en la nueva página con un margen superior
+      }
+      return currentPage;
+    };
+  
     // Ordenar los productos por precio de menor a mayor
     const sortedCartItems = [...cartItems].sort((a, b) => a.price - b.price);
   
     // Obtener el precio del producto más barato
     const cheapestPrice = sortedCartItems.length > 0 ? sortedCartItems[0].price : 0;
   
-    //Ejecución
-
+    // Posición Y inicial en la primera página
+    let currentPageY = 10;
+  
     // Agregar título
-    const titleLines = doc.splitTextToSize("Analisis de compras", 130); // Dividir el título en líneas si es necesario
-    doc.text(titleLines, 15, 10);
-
+    const titleLines = doc.splitTextToSize("Análisis de compras", 130); // Dividir el título en líneas si es necesario
+    currentPageY = addNewPageIfNeeded(currentPageY, titleLines.length * 10); // Verificar si se necesita una nueva página
+    doc.text(titleLines, 15, currentPageY);
+    currentPageY += titleLines.length * 10; // Incrementar la posición Y
+  
     // Datos de los productos
     sortedCartItems.forEach((product, index) => {
+      // Agregar título
+      const titleLines = doc.splitTextToSize(product.title, 130); // Dividir el título en líneas si es necesario
+  
+      // Calcular la altura total de la tarjeta
+      const cardHeight = Math.max(titleLines.length * 10 + 45, 80); // Ajustar este valor según el espacio requerido por la tarjeta
+  
+      currentPageY = addNewPageIfNeeded(currentPageY, cardHeight); // Verificar si se necesita una nueva página
+      const x = 15; // Posición X para la imagen
+  
       // Agregar la imagen al documento PDF
       const imgData = product.thumbnail;
       const imgWidth = 40; // Ancho de la imagen en el PDF
       const imgHeight = 40; // Altura de la imagen en el PDF
-      const x = 15; // Posición X para la imagen
-      const y = 20 + index * 80; // Posición Y para cada producto
-  
-      doc.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight); // Agregar la imagen al PDF
+      const yImage = currentPageY + (cardHeight - imgHeight) / 4; // Alinear la imagen verticalmente con el texto del título
+      doc.addImage(imgData, 'JPEG', x, yImage, imgWidth, imgHeight); // Agregar la imagen al PDF
   
       // Agregar título
-      const titleLines = doc.splitTextToSize(product.title, 130); // Dividir el título en líneas si es necesario
-      doc.text(titleLines, x + imgWidth + 10, y + 10);
-
+      doc.text(titleLines, x + imgWidth + 10, currentPageY + 10);
+  
       // Calcular el ancho del texto del enlace
       const linkTextWidth = doc.getStringUnitWidth('Ver enlace') * doc.internal.getFontSize(); // Ancho del texto del enlace
-
+  
       // Definir el color y el estilo del enlace
       const linkColor = '#007bff'; // Color azul suave
       const linkStyle = 'U'; // Subrayado
-
+  
       // Agregar el texto del enlace con el estilo definido
       doc.setTextColor(linkColor);
-      doc.textWithLink('Ver enlace', x + imgWidth + 10, y + 30, { url: product.permalink, underline: linkStyle }); // Agregar el texto del enlace
-
+      doc.textWithLink('Ver enlace', x + imgWidth + 10, currentPageY + titleLines.length * 10 + 20, { url: product.permalink, underline: linkStyle }); // Agregar el texto del enlace
+  
       // Agregar precio
       doc.setTextColor(0, 0, 0); // Restaurar color de texto a negro
       if (product.price === cheapestPrice) {
         doc.setTextColor(255, 0, 0); // Establecer color de texto a rojo para el producto más barato
-        doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) + " (Menor precio)", x + imgWidth + 10, y + 40);
+        doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) + " (Menor precio)", x + imgWidth + 10, currentPageY + titleLines.length * 10 + 30);
         doc.setTextColor(0, 0, 0); // Restaurar color de texto a negro
       } else {
-        doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }), x + imgWidth + 10, y + 40);
+        doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }), x + imgWidth + 10, currentPageY + titleLines.length * 10 + 30);
       }
-
-      // Agregar línea divisoria
-      if (index < sortedCartItems.length - 1) {
-        doc.line(15, y + 60, 195, y + 60); // Línea divisoria
-      }
+  
+      // Dibujar línea divisoria
+      doc.setDrawColor(0); // Color de la línea: negro
+      doc.line(x, currentPageY + cardHeight - 10, 195, currentPageY + cardHeight - 10); // Dibujar línea divisoria
+  
+      // Incrementar la posición Y para la siguiente tarjeta de producto
+      currentPageY += cardHeight + 10; // Ajusta este valor según el espacio que desees entre cada tarjeta de producto
     });
   
     doc.save('Comparativa_Mercado_Libre.pdf');
@@ -232,6 +253,8 @@ useEffect(() => {
       setCartVisible(false);
     }, 100);
   };
+  
+  
   
   
   
