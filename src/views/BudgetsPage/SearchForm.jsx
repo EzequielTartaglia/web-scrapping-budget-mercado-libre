@@ -38,7 +38,7 @@ const SearchForm = ({
         <option value="price_desc">Precio: Mayor a Menor</option>
         <option value="price_asc">Precio: Menor a Mayor</option>
       </select>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto md:mt-[-5px]">
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto mt-[0px] md:mt-[-5px]">
         Buscar
       </button>
     </form>
