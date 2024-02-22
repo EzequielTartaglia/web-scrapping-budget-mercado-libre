@@ -11,19 +11,20 @@ const SearchForm = ({
   countries,
 }) => {
   return (
-    <form onSubmit={handleSearchSubmit} className="mt-4 mb-4">
+    <form onSubmit={handleSearchSubmit} className="mt-4 mb-4 flex flex-col sm:flex-row items-center justify-center">
       <input
         type="text"
         value={query}
         onChange={handleSearchInputChange}
         placeholder="Buscar productos..."
-        className="p-2 border border-black rounded text-black"
-        style={{ width: '300px' }}
+        className="p-2 border border-black rounded text-black mb-2 sm:mr-2"
+        style={{ minWidth: '200px' }}
       />
       <select
         value={country}
         onChange={handleCountryChange}
-        className="ml-2 p-2 border border-black rounded text-black"
+        className="p-2 border border-black rounded text-black mb-2 sm:mr-2"
+        style={{ minWidth: '100px' }}
       >
         {countries.map((c) => (
           <option key={c.code} value={c.code}>
@@ -34,12 +35,13 @@ const SearchForm = ({
       <select
         value={sortOrder}
         onChange={handleSortOrderChange}
-        className="ml-2 p-2 border border-black rounded text-black"
+        className="p-2 border border-black rounded text-black mb-2 sm:mr-2"
+        style={{ minWidth: '100px' }}
       >
         <option value="price_desc">Precio: Mayor a Menor</option>
         <option value="price_asc">Precio: Menor a Mayor</option>
       </select>
-      <button type="submit" className="ml-2 bg-blue-500 text-white px-4 py-2 rounded">
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto md:mt-[-5px]">
         Buscar
       </button>
     </form>
