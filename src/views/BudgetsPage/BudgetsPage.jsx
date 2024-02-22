@@ -170,27 +170,57 @@ useEffect(() => {
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
   
+    // Ordenar los productos por precio de menor a mayor
+    const sortedCartItems = [...cartItems].sort((a, b) => a.price - b.price);
+  
+    // Obtener el precio del producto más barato
+    const cheapestPrice = sortedCartItems.length > 0 ? sortedCartItems[0].price : 0;
+  
+    //Ejecución
+
+    // Agregar título
+    const titleLines = doc.splitTextToSize("Analisis de compras", 130); // Dividir el título en líneas si es necesario
+    doc.text(titleLines, 15, 10);
+
     // Datos de los productos
-    cartItems.forEach((product, index) => {
+    sortedCartItems.forEach((product, index) => {
       // Agregar la imagen al documento PDF
       const imgData = product.thumbnail;
       const imgWidth = 40; // Ancho de la imagen en el PDF
       const imgHeight = 40; // Altura de la imagen en el PDF
       const x = 15; // Posición X para la imagen
-      const y = 10 + index * 60; // Posición Y para cada producto
+      const y = 20 + index * 80; // Posición Y para cada producto
   
       doc.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight); // Agregar la imagen al PDF
   
       // Agregar título
       const titleLines = doc.splitTextToSize(product.title, 130); // Dividir el título en líneas si es necesario
       doc.text(titleLines, x + imgWidth + 10, y + 10);
-  
+
+      // Calcular el ancho del texto del enlace
+      const linkTextWidth = doc.getStringUnitWidth('Ver enlace') * doc.internal.getFontSize(); // Ancho del texto del enlace
+
+      // Definir el color y el estilo del enlace
+      const linkColor = '#007bff'; // Color azul suave
+      const linkStyle = 'U'; // Subrayado
+
+      // Agregar el texto del enlace con el estilo definido
+      doc.setTextColor(linkColor);
+      doc.textWithLink('Ver enlace', x + imgWidth + 10, y + 30, { url: product.permalink, underline: linkStyle }); // Agregar el texto del enlace
+
       // Agregar precio
-      doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }), x + imgWidth + 10, y + 30);
-  
+      doc.setTextColor(0, 0, 0); // Restaurar color de texto a negro
+      if (product.price === cheapestPrice) {
+        doc.setTextColor(255, 0, 0); // Establecer color de texto a rojo para el producto más barato
+        doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) + " (Menor precio)", x + imgWidth + 10, y + 40);
+        doc.setTextColor(0, 0, 0); // Restaurar color de texto a negro
+      } else {
+        doc.text("$" + product.price.toLocaleString('en-US', { minimumFractionDigits: 2 }), x + imgWidth + 10, y + 40);
+      }
+
       // Agregar línea divisoria
-      if (index < cartItems.length - 1) {
-        doc.line(15, y + 50, 195, y + 50); // Línea divisoria
+      if (index < sortedCartItems.length - 1) {
+        doc.line(15, y + 60, 195, y + 60); // Línea divisoria
       }
     });
   
@@ -202,10 +232,6 @@ useEffect(() => {
       setCartVisible(false);
     }, 100);
   };
-  
-  
-  
-  
   
   
   
