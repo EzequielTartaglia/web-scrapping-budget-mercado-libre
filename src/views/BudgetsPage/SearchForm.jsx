@@ -17,14 +17,12 @@ const SearchForm = ({
         value={query}
         onChange={handleSearchInputChange}
         placeholder="Buscar productos..."
-        className="p-2 border border-black rounded text-black mb-2 sm:mr-2"
-        style={{ minWidth: '200px' }}
+        className="p-2 border border-black rounded text-black mb-2 sm:mr-2 sm:w-auto w-[200px]"
       />
       <select
         value={country}
         onChange={handleCountryChange}
-        className="p-2 border border-black rounded text-black mb-2 sm:mr-2"
-        style={{ minWidth: '100px' }}
+        className="p-2 border border-black rounded text-black mb-2 sm:mr-2 sm:w-auto w-[200px]"
       >
         {countries.map((c) => (
           <option key={c.code} value={c.code}>
@@ -35,8 +33,7 @@ const SearchForm = ({
       <select
         value={sortOrder}
         onChange={handleSortOrderChange}
-        className="p-2 border border-black rounded text-black mb-2 sm:mr-2"
-        style={{ minWidth: '100px' }}
+        className="p-2 border border-black rounded text-black mb-2 sm:mr-2 sm:w-auto w-[200px]"
       >
         <option value="price_desc">Precio: Mayor a Menor</option>
         <option value="price_asc">Precio: Menor a Mayor</option>
