@@ -265,7 +265,7 @@ useEffect(() => {
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-gray-50 dark:bg-black">
       <SearchForm
         query={query}
         country={country}
@@ -312,25 +312,25 @@ useEffect(() => {
       </div>
       <div className="mt-4">
         {products.length > 0 ? (
-          <table className="table-auto border border-white">
+          <table className="table-auto border border-black dark:border-white">
             <thead>
               <tr>
-                <th className="border border-white">Producto</th>
-                <th className="border border-white">Precio</th>
-                <th className="w-1/10 border border-white">Imagen</th>
-                <th className="border border-white">Acciones</th>
+                <th className="border border-black dark:border-white">Producto</th>
+                <th className="border border-black dark:border-white">Precio</th>
+                <th className="w-1/10 border border-black dark:border-white">Imagen</th>
+                <th className="border border-black dark:border-white">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {products.map((product) => (
                 <tr key={product.id}>
-                  <td className="w-1/10 border border-white" style={{ padding: '2px', width: '500px' }}>
+                  <td className="w-1/10 border border-black dark:border-white" style={{ padding: '2px', width: '500px' }}>
                     <a
                       href={product.permalink}
                       style={{
                         padding: '2px',
                         textDecoration: 'none',
-                        color: 'white',
+                        color: 'color-black dark:color-white',
                         borderBottom: '1px solid transparent',
                         transition: 'border-color 0.3s ease',
                       }}
@@ -343,11 +343,11 @@ useEffect(() => {
                       {product.title}
                     </a>
                   </td>
-                  <td className="border border-white" style={{ padding: '2px', width: '150px', textAlign: 'center' }}>$ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                  <td className="border border-white" style={{ padding: '2px' }}>
+                  <td className="border border-black dark:border-white" style={{ padding: '2px', width: '150px', textAlign: 'center' }}>$ {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td className="border border-black dark:border-white" style={{ padding: '2px' }}>
                     <Image src={product.thumbnail} alt={product.title} width="100" height="70" />
                   </td>
-                  <td className="border border-white" style={{ textAlign: 'center' }}>
+                  <td className="border border-black dark:border-white" style={{ textAlign: 'center' }}>
                     <button title="Agregar a comparativa" onClick={() => addToCart(product)}>
                       <FaPlus />
                     </button>
